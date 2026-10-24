@@ -231,6 +231,7 @@
       display: flex;
       flex-direction: column;
       gap: 4px;
+      transition: all 0.3s ease;
     }
     .action-header-line {
       display: flex;
@@ -256,6 +257,28 @@
       font-size: 13px;
       color: #3b82f6;
       font-weight: 500;
+    }
+
+    /* АНИМАЦИЯ ПУЛЬСАЦИИ КАРТОЧКИ ИНСТРУКЦИИ */
+    @keyframes pulseCardGlow {
+      0% {
+        box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.45);
+        border-color: #2563eb;
+        background-color: #eff6ff;
+      }
+      50% {
+        box-shadow: 0 0 0 9px rgba(37, 99, 235, 0.15);
+        border-color: #1d4ed8;
+        background-color: #dbeafe;
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
+        border-color: #bfdbfe;
+        background-color: #eff6ff;
+      }
+    }
+    .card-step-pulse {
+      animation: pulseCardGlow 1.2s ease-in-out 3 !important;
     }
 
     .chips-container {
@@ -305,7 +328,7 @@
       border: 1.5px solid #cbd5e1;
       border-radius: 8px;
       background: #ffffff;
-      min-height: 340px;
+      min-height: 320px;
       margin-bottom: 16px;
       overflow: hidden;
     }
@@ -378,6 +401,10 @@
     .board-slot.error-border {
       border-color: #ef4444 !important;
       background: #fef2f2 !important;
+    }
+    .board-slot.success-border {
+      border-color: #22c55e !important;
+      background: #f0fdf4 !important;
     }
     .badge-letter {
       width: 26px;
@@ -468,6 +495,58 @@
       box-shadow: 0 0 0 2px #eff6ff;
     }
 
+    /* ЗАДАНИЯ НА СООТВЕТСТВИЕ */
+    .match-table-card {
+      border: 1.5px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 16px;
+      background: #ffffff;
+      margin-bottom: 16px;
+    }
+    .match-row-item {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 12px;
+    }
+    @media (max-width: 580px) {
+      .match-row-item {
+        grid-template-columns: 60px 1fr;
+      }
+    }
+    .match-letter-badge {
+      height: 44px;
+      border-radius: 6px;
+      background: #2563eb;
+      color: #ffffff;
+      font-size: 20px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* АНИМАЦИЯ ПРИЗЫВА К ДЕЙСТВИЮ (ПУЛЬСАЦИЯ КНОПКИ) */
+    @keyframes pulseCheckGlow {
+      0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.6);
+      }
+      50% {
+        transform: scale(1.03);
+        box-shadow: 0 0 0 10px rgba(37, 99, 235, 0);
+      }
+      100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
+      }
+    }
+    .btn-pulse {
+      animation: pulseCheckGlow 1.5s infinite ease-in-out !important;
+      background: #1d4ed8 !important;
+    }
+
     .btn-nav {
       padding: 10px 24px;
       border-radius: 10px;
@@ -512,6 +591,7 @@
       opacity: 0.4;
       cursor: not-allowed;
       box-shadow: none;
+      animation: none !important;
     }
 
     .btn-primary {
@@ -580,7 +660,7 @@
       align-items: center;
       justify-content: center;
       font-weight: 700;
-      font-size: 15px;
+      font-size: 14px;
       cursor: pointer;
       transition: transform 0.15s, box-shadow 0.15s;
     }
@@ -591,6 +671,11 @@
       background: #dcfce7;
       color: #15803d;
       border: 2px solid #22c55e;
+    }
+    .badge-item.partial {
+      background: #fef9c3;
+      color: #854d0e;
+      border: 2px solid #eab308;
     }
     .badge-item.wrong {
       background: #fee2e2;
@@ -608,8 +693,8 @@
 
   <div class="main-card">
     <div class="header-status">
-      <span class="step-badge" id="step-badge-text">Шаг 1 из 9</span>
-      <span class="score-badge-header" id="score-badge-text">Баллы: 0 / 8</span>
+      <span class="step-badge" id="step-badge-text">Шаг 1 из 11</span>
+      <span class="score-badge-header" id="score-badge-text">Баллы: 0 / 10</span>
     </div>
 
     <!-- ШАГ 1: БУКВА K -->
@@ -808,124 +893,82 @@
       </div>
     </div>
 
-    <!-- ШАГ 5: ПОШАГОВЫЙ ТРЕНАЖЁР-ДОСКА (ЗАДАЧА 1) -->
+    <!-- ШАГ 5: СООТВЕТСТВИЕ БУКВ И ИХ ОБОЗНАЧЕНИЙ -->
     <div class="page-view" id="page-4">
       <div class="task-statement">
-        <strong>Задание №5:</strong> Имеется растровое изображение размером 512 &times; 512 пикселей и объёмом 64 Кбайт. Определите максимально возможное количество цветов в палитре изображения.
-      </div>
-
-      <div class="action-instruction-card">
-        <div class="action-header-line">
-          <span class="action-step-tag" id="tag-step-5">ШАГ 1 ИЗ 3</span>
-          <span class="action-title-text" id="title-action-5">Распределите буквы формулы:</span>
-        </div>
-        <div class="action-sub-text" id="desc-action-5">
-          Перетащите нужные буквы в колонки «Дано» и «Найти». Лишние карточки оставьте на панели сверху!
+        <strong>Задание №5:</strong> Сопоставьте каждую букву с тем, что она обозначает в формулах.
+        <div style="font-size: 13px; color: #64748b; font-weight: 400; margin-top: 4px;">
+          Перетащите карточки к буквам или выберите кликом.
         </div>
       </div>
 
-      <div class="chips-container" id="chips-pool-5"></div>
+      <div class="chips-container" id="chips-pool-match1"></div>
 
-      <div class="board-container">
-        <div class="board-left">
-          <div class="board-header">Дано:</div>
-          <div class="dano-rows" id="dano-slots-5"></div>
-          <div class="dano-divider"></div>
-          <div class="board-header" style="margin-top: 4px;">Найти:</div>
-          <div class="find-rows" id="find-slots-5"></div>
+      <div class="match-table-card">
+        <div class="match-row-item">
+          <div class="match-letter-badge">K</div>
+          <div class="board-slot" id="slot-match1-K" data-letter="K"></div>
         </div>
-
-        <div class="board-right">
-          <div class="board-header">Решение:</div>
-
-          <div class="solution-section">
-            <div class="section-title">1. Необходимые формулы:</div>
-            <div class="formula-dropzone" id="formula-zone-5"></div>
-          </div>
-
-          <div class="solution-section" id="calc-section-5" style="display: none;">
-            <div class="section-title">2. Перевод единиц и вычисление:</div>
-            <div class="calc-row">
-              <span>I = 64 Кбайт = 64 &times; 1024 &times; 8 бит</span>
-            </div>
-            <div class="calc-row">
-              <span>i = I / K = (64 &times; 1024 &times; 8) / (512 &times; 512) = </span>
-              <input type="text" class="calc-input" id="input-i-5" placeholder="?">
-              <span>бит</span>
-            </div>
-            <div class="calc-row" id="calc-step-5-3" style="display: none;">
-              <span>N = 2<sup>i</sup> = 2<sup><span id="power-val-5">?</span></sup> = </span>
-              <input type="text" class="calc-input" id="input-n-5" placeholder="?">
-            </div>
-          </div>
+        <div class="match-row-item">
+          <div class="match-letter-badge">i</div>
+          <div class="board-slot" id="slot-match1-i" data-letter="i"></div>
+        </div>
+        <div class="match-row-item">
+          <div class="match-letter-badge">I</div>
+          <div class="board-slot" id="slot-match1-I" data-letter="I"></div>
+        </div>
+        <div class="match-row-item">
+          <div class="match-letter-badge">N</div>
+          <div class="board-slot" id="slot-match1-N" data-letter="N"></div>
         </div>
       </div>
 
       <div style="display: flex; gap: 10px;">
-        <button class="btn-nav btn-forward" id="btn-check-5" onclick="checkBoardStep(5)" style="background:#2563eb; color:#ffffff;">Проверить буквы</button>
+        <button class="btn-nav btn-forward" id="btn-check-match1" onclick="checkMatchingTask(1)" style="background:#2563eb; color:#ffffff;">Проверить соответствие</button>
       </div>
-      <div class="feedback-note" id="fb-board-5"></div>
+      <div class="feedback-note" id="fb-match1"></div>
     </div>
 
-    <!-- ШАГ 6: ПОШАГОВЫЙ ТРЕНАЖЁР-ДОСКА (ЗАДАЧА 2) -->
+    <!-- ШАГ 6: СООТВЕТСТВИЕ БУКВ И ЕДИНИЦ ИЗМЕРЕНИЯ -->
     <div class="page-view" id="page-5">
       <div class="task-statement">
-        <strong>Задание №6:</strong> Имеется растровое изображение размером 192 &times; 256 пикселей и объёмом 24 Кбайт. Определите глубину цвета в битах.
-      </div>
-
-      <div class="action-instruction-card">
-        <div class="action-header-line">
-          <span class="action-step-tag" id="tag-step-6">ШАГ 1 ИЗ 3</span>
-          <span class="action-title-text" id="title-action-6">Распределите буквы формулы:</span>
-        </div>
-        <div class="action-sub-text" id="desc-action-6">
-          Перетащите нужные буквы в колонки «Дано» и «Найти». Лишние карточки оставьте на панели сверху!
+        <strong>Задание №6:</strong> Сопоставьте каждую букву с единицами измерения, в которых она выражается.
+        <div style="font-size: 13px; color: #64748b; font-weight: 400; margin-top: 4px;">
+          Перетащите подходящие единицы к буквам или выберите кликом.
         </div>
       </div>
 
-      <div class="chips-container" id="chips-pool-6"></div>
+      <div class="chips-container" id="chips-pool-match2"></div>
 
-      <div class="board-container">
-        <div class="board-left">
-          <div class="board-header">Дано:</div>
-          <div class="dano-rows" id="dano-slots-6"></div>
-          <div class="dano-divider"></div>
-          <div class="board-header" style="margin-top: 4px;">Найти:</div>
-          <div class="find-rows" id="find-slots-6"></div>
+      <div class="match-table-card">
+        <div class="match-row-item">
+          <div class="match-letter-badge">K</div>
+          <div class="board-slot" id="slot-match2-K" data-letter="K"></div>
         </div>
-
-        <div class="board-right">
-          <div class="board-header">Решение:</div>
-
-          <div class="solution-section">
-            <div class="section-title">1. Необходимые формулы:</div>
-            <div class="formula-dropzone" id="formula-zone-6"></div>
-          </div>
-
-          <div class="solution-section" id="calc-section-6" style="display: none;">
-            <div class="section-title">2. Перевод единиц и вычисление:</div>
-            <div class="calc-row">
-              <span>I = 24 Кбайт = 24 &times; 1024 &times; 8 бит</span>
-            </div>
-            <div class="calc-row">
-              <span>i = I / K = (24 &times; 1024 &times; 8) / (192 &times; 256) = </span>
-              <input type="text" class="calc-input" id="input-i-6" placeholder="?">
-              <span>бит</span>
-            </div>
-          </div>
+        <div class="match-row-item">
+          <div class="match-letter-badge">i</div>
+          <div class="board-slot" id="slot-match2-i" data-letter="i"></div>
+        </div>
+        <div class="match-row-item">
+          <div class="match-letter-badge">I</div>
+          <div class="board-slot" id="slot-match2-I" data-letter="I"></div>
+        </div>
+        <div class="match-row-item">
+          <div class="match-letter-badge">N</div>
+          <div class="board-slot" id="slot-match2-N" data-letter="N"></div>
         </div>
       </div>
 
       <div style="display: flex; gap: 10px;">
-        <button class="btn-nav btn-forward" id="btn-check-6" onclick="checkBoardStep(6)" style="background:#2563eb; color:#ffffff;">Проверить буквы</button>
+        <button class="btn-nav btn-forward" id="btn-check-match2" onclick="checkMatchingTask(2)" style="background:#2563eb; color:#ffffff;">Проверить единицы измерения</button>
       </div>
-      <div class="feedback-note" id="fb-board-6"></div>
+      <div class="feedback-note" id="fb-match2"></div>
     </div>
 
-    <!-- ШАГ 7: ПОШАГОВЫЙ ТРЕНАЖЁР-ДОСКА (ЗАДАЧА 3) -->
+    <!-- ШАГ 7: ПОШАГОВЫЙ ТРЕНАЖЁР-ДОСКА (ЗАДАЧА 1) -->
     <div class="page-view" id="page-6">
       <div class="task-statement">
-        <strong>Задание №7:</strong> Рисунок размером 64 &times; 64 пикселей сохранён с использованием 256-цветной палитры. Какой объём памяти в Кбайтах потребуется выделить?
+        <strong>Задание №7:</strong> Имеется растровое изображение размером 512 &times; 512 пикселей и объёмом 64 Кбайт. Определите максимально возможное количество цветов в палитре изображения.
       </div>
 
       <div class="action-instruction-card">
@@ -952,22 +995,24 @@
         <div class="board-right">
           <div class="board-header">Решение:</div>
 
-          <div class="solution-section">
+          <div class="solution-section" id="formula-section-7" style="display: none;">
             <div class="section-title">1. Необходимые формулы:</div>
             <div class="formula-dropzone" id="formula-zone-7"></div>
           </div>
 
           <div class="solution-section" id="calc-section-7" style="display: none;">
-            <div class="section-title">2. Вычисление и перевод:</div>
+            <div class="section-title">2. Перевод единиц и вычисление:</div>
             <div class="calc-row">
-              <span>N = 256 &rarr; 256 = 2<sup>i</sup> &rarr; i = </span>
+              <span>I = 64 Кбайт = 64 &times; 1024 &times; 8 бит</span>
+            </div>
+            <div class="calc-row">
+              <span>i = I / K = (64 &times; 1024 &times; 8) / (512 &times; 512) = </span>
               <input type="text" class="calc-input" id="input-i-7" placeholder="?">
               <span>бит</span>
             </div>
-            <div class="calc-row" id="calc-step-7-2" style="display: none;">
-              <span>I = K &times; i = 64 &times; 64 &times; <span id="calc-i-val-7">?</span> бит = </span>
-              <input type="text" class="calc-input" id="input-kb-7" placeholder="?" style="width: 70px;">
-              <span>Кбайт</span>
+            <div class="calc-row" id="calc-step-7-3" style="display: none;">
+              <span>N = 2<sup>i</sup> = 2<sup><span id="power-val-7">?</span></sup> = </span>
+              <input type="text" class="calc-input" id="input-n-7" placeholder="?">
             </div>
           </div>
         </div>
@@ -979,10 +1024,10 @@
       <div class="feedback-note" id="fb-board-7"></div>
     </div>
 
-    <!-- ШАГ 8: ПОШАГОВЫЙ ТРЕНАЖЁР-ДОСКА (ЗАДАЧА 4) -->
+    <!-- ШАГ 8: ПОШАГОВЫЙ ТРЕНАЖЁР-ДОСКА (ЗАДАЧА 2) -->
     <div class="page-view" id="page-7">
       <div class="task-statement">
-        <strong>Задание №8:</strong> Для хранения растрового изображения размером 128 &times; 128 пикселей отведено 8 Кбайт памяти. Какое максимальное количество цветов можно использовать в палитре?
+        <strong>Задание №8:</strong> Имеется растровое изображение размером 192 &times; 256 пикселей и объёмом 24 Кбайт. Определите глубину цвета в битах.
       </div>
 
       <div class="action-instruction-card">
@@ -1009,24 +1054,20 @@
         <div class="board-right">
           <div class="board-header">Решение:</div>
 
-          <div class="solution-section">
+          <div class="solution-section" id="formula-section-8" style="display: none;">
             <div class="section-title">1. Необходимые формулы:</div>
             <div class="formula-dropzone" id="formula-zone-8"></div>
           </div>
 
           <div class="solution-section" id="calc-section-8" style="display: none;">
-            <div class="section-title">2. Перевод и вычисления:</div>
+            <div class="section-title">2. Перевод единиц и вычисление:</div>
             <div class="calc-row">
-              <span>I = 8 Кбайт = 8 &times; 1024 &times; 8 бит</span>
+              <span>I = 24 Кбайт = 24 &times; 1024 &times; 8 бит</span>
             </div>
             <div class="calc-row">
-              <span>i = I / K = (8 &times; 1024 &times; 8) / (128 &times; 128) = </span>
+              <span>i = I / K = (24 &times; 1024 &times; 8) / (192 &times; 256) = </span>
               <input type="text" class="calc-input" id="input-i-8" placeholder="?">
               <span>бит</span>
-            </div>
-            <div class="calc-row" id="calc-step-8-2" style="display: none;">
-              <span>N = 2<sup>i</sup> = 2<sup><span id="power-val-8">?</span></sup> = </span>
-              <input type="text" class="calc-input" id="input-n-8" placeholder="?">
             </div>
           </div>
         </div>
@@ -1038,11 +1079,127 @@
       <div class="feedback-note" id="fb-board-8"></div>
     </div>
 
-    <!-- ШАГ 9: ИТОГОВЫЙ ЭКРАН -->
+    <!-- ШАГ 9: ПОШАГОВЫЙ ТРЕНАЖЁР-ДОСКА (ЗАДАЧА 3) -->
     <div class="page-view" id="page-8">
+      <div class="task-statement">
+        <strong>Задание №9:</strong> Рисунок размером 64 &times; 64 пикселей сохранён с использованием 256-цветной палитры. Какой объём памяти в Кбайтах потребуется выделить?
+      </div>
+
+      <div class="action-instruction-card">
+        <div class="action-header-line">
+          <span class="action-step-tag" id="tag-step-9">ШАГ 1 ИЗ 3</span>
+          <span class="action-title-text" id="title-action-9">Распределите буквы формулы:</span>
+        </div>
+        <div class="action-sub-text" id="desc-action-9">
+          Перетащите нужные буквы в колонки «Дано» и «Найти». Лишние карточки оставьте на панели сверху!
+        </div>
+      </div>
+
+      <div class="chips-container" id="chips-pool-9"></div>
+
+      <div class="board-container">
+        <div class="board-left">
+          <div class="board-header">Дано:</div>
+          <div class="dano-rows" id="dano-slots-9"></div>
+          <div class="dano-divider"></div>
+          <div class="board-header" style="margin-top: 4px;">Найти:</div>
+          <div class="find-rows" id="find-slots-9"></div>
+        </div>
+
+        <div class="board-right">
+          <div class="board-header">Решение:</div>
+
+          <div class="solution-section" id="formula-section-9" style="display: none;">
+            <div class="section-title">1. Необходимые формулы:</div>
+            <div class="formula-dropzone" id="formula-zone-9"></div>
+          </div>
+
+          <div class="solution-section" id="calc-section-9" style="display: none;">
+            <div class="section-title">2. Вычисление и перевод:</div>
+            <div class="calc-row">
+              <span>N = 256 &rarr; 256 = 2<sup>i</sup> &rarr; i = </span>
+              <input type="text" class="calc-input" id="input-i-9" placeholder="?">
+              <span>бит</span>
+            </div>
+            <div class="calc-row" id="calc-step-9-2" style="display: none;">
+              <span>I = K &times; i = 64 &times; 64 &times; <span id="calc-i-val-9">?</span> бит = </span>
+              <input type="text" class="calc-input" id="input-kb-9" placeholder="?" style="width: 70px;">
+              <span>Кбайт</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 10px;">
+        <button class="btn-nav btn-forward" id="btn-check-9" onclick="checkBoardStep(9)" style="background:#2563eb; color:#ffffff;">Проверить буквы</button>
+      </div>
+      <div class="feedback-note" id="fb-board-9"></div>
+    </div>
+
+    <!-- ШАГ 10: ПОШАГОВЫЙ ТРЕНАЖЁР-ДОСКА (ЗАДАЧА 4) -->
+    <div class="page-view" id="page-9">
+      <div class="task-statement">
+        <strong>Задание №10:</strong> Для хранения растрового изображения размером 128 &times; 128 пикселей отведено 8 Кбайт памяти. Какое максимальное количество цветов можно использовать в палитре?
+      </div>
+
+      <div class="action-instruction-card">
+        <div class="action-header-line">
+          <span class="action-step-tag" id="tag-step-10">ШАГ 1 ИЗ 3</span>
+          <span class="action-title-text" id="title-action-10">Распределите буквы формулы:</span>
+        </div>
+        <div class="action-sub-text" id="desc-action-10">
+          Перетащите нужные буквы в колонки «Дано» и «Найти». Лишние карточки оставьте на панели сверху!
+        </div>
+      </div>
+
+      <div class="chips-container" id="chips-pool-10"></div>
+
+      <div class="board-container">
+        <div class="board-left">
+          <div class="board-header">Дано:</div>
+          <div class="dano-rows" id="dano-slots-10"></div>
+          <div class="dano-divider"></div>
+          <div class="board-header" style="margin-top: 4px;">Найти:</div>
+          <div class="find-rows" id="find-slots-10"></div>
+        </div>
+
+        <div class="board-right">
+          <div class="board-header">Решение:</div>
+
+          <div class="solution-section" id="formula-section-10" style="display: none;">
+            <div class="section-title">1. Необходимые формулы:</div>
+            <div class="formula-dropzone" id="formula-zone-10"></div>
+          </div>
+
+          <div class="solution-section" id="calc-section-10" style="display: none;">
+            <div class="section-title">2. Перевод и вычисления:</div>
+            <div class="calc-row">
+              <span>I = 8 Кбайт = 8 &times; 1024 &times; 8 бит</span>
+            </div>
+            <div class="calc-row">
+              <span>i = I / K = (8 &times; 1024 &times; 8) / (128 &times; 128) = </span>
+              <input type="text" class="calc-input" id="input-i-10" placeholder="?">
+              <span>бит</span>
+            </div>
+            <div class="calc-row" id="calc-step-10-2" style="display: none;">
+              <span>N = 2<sup>i</sup> = 2<sup><span id="power-val-10">?</span></sup> = </span>
+              <input type="text" class="calc-input" id="input-n-10" placeholder="?">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 10px;">
+        <button class="btn-nav btn-forward" id="btn-check-10" onclick="checkBoardStep(10)" style="background:#2563eb; color:#ffffff;">Проверить буквы</button>
+      </div>
+      <div class="feedback-note" id="fb-board-10"></div>
+    </div>
+
+    <!-- ШАГ 11: ИТОГОВЫЙ ЭКРАН -->
+    <div class="page-view" id="page-10">
       <div class="result-screen">
         <h2>Тестирование завершено</h2>
-        <div class="result-score" id="final-score">0 / 8</div>
+        <div class="result-score" id="final-score">0 / 10</div>
         <p class="result-msg" id="final-message"></p>
         
         <div style="font-weight: 600; color: #334155; margin-bottom: 12px; font-size: 15px;">Результаты по заданиям:</div>
@@ -1061,31 +1218,45 @@
 
   <script>
     let currentStep = 0;
-    const totalSteps = 9;
+    const totalSteps = 11;
+    const totalTasks = 10;
 
-    let taskStates = {
-      1: { attempts: 0, errors: 0, completed: false, skipped: false },
-      2: { attempts: 0, errors: 0, completed: false, skipped: false },
-      3: { attempts: 0, errors: 0, completed: false, skipped: false },
-      4: { attempts: 0, errors: 0, completed: false, skipped: false },
-      5: { attempts: 0, errors: 0, completed: false, skipped: false },
-      6: { attempts: 0, errors: 0, completed: false, skipped: false },
-      7: { attempts: 0, errors: 0, completed: false, skipped: false },
-      8: { attempts: 0, errors: 0, completed: false, skipped: false }
-    };
-
-    function updateScoreCounter() {
-      let score = 0;
-      for (let i = 1; i <= 8; i++) {
-        if (taskStates[i].completed && taskStates[i].errors === 0) {
-          score++;
-        }
-      }
-      document.getElementById('score-badge-text').innerText = `Баллы: ${score} / 8`;
-      return score;
+    let taskStates = {};
+    for (let i = 1; i <= totalTasks; i++) {
+      taskStates[i] = { 
+        attempts: 0, 
+        errors: 0, 
+        completed: false, 
+        skipped: false,
+        correctStages: 0 // подсчёт верно пройденных промежуточных шагов
+      };
     }
 
-    // ДИНАМИЧЕСКОЕ ОБНОВЛЕНИЕ КНОПКИ «ПРОПУСТИТЬ» / «ВПЕРЁД»
+    function calculateScores() {
+      let fullScore = 0;
+      let partialCount = 0;
+
+      for (let i = 1; i <= totalTasks; i++) {
+        const st = taskStates[i];
+        if (st.completed && st.errors === 0) {
+          fullScore++;
+        } else if ((st.completed && st.errors > 0) || (st.correctStages > 0 && st.errors > 0)) {
+          partialCount++;
+        }
+      }
+
+      // За полностью верное задание — 1 балл, за частичное прохождение — 0.5 балла
+      const totalScore = fullScore + partialCount * 0.5;
+      return { fullScore, partialCount, totalScore };
+    }
+
+    function updateScoreCounter() {
+      const { totalScore } = calculateScores();
+      const displayScore = Number.isInteger(totalScore) ? totalScore : totalScore.toFixed(1);
+      document.getElementById('score-badge-text').innerText = `Баллы: ${displayScore} / ${totalTasks}`;
+      return totalScore;
+    }
+
     function updateNextButtonState() {
       const nextBtn = document.getElementById('global-next');
       if (currentStep === totalSteps - 1) {
@@ -1125,11 +1296,13 @@
 
       updateNextButtonState();
 
-      if (step >= 4 && step <= 7) {
+      if (step === 4) initMatchingTask(1);
+      if (step === 5) initMatchingTask(2);
+      if (step >= 6 && step <= 9) {
         initBoardTask(step + 1);
       }
 
-      if (step === 8) {
+      if (step === 10) {
         showResults();
       }
     }
@@ -1167,8 +1340,201 @@
       updateNextButtonState();
     }
 
+    /* ЗАДАНИЯ НА СООТВЕТСТВИЕ (ШАГИ 5 И 6) */
+    const matchConfigs = {
+      1: {
+        taskNum: 5,
+        letters: ["K", "i", "I", "N"],
+        items: [
+          "Общее количество всех пикселей",
+          "Глубина цвета (вес одного пикселя)",
+          "Информационный объём всего файла",
+          "Количество цветов в палитре"
+        ],
+        solution: {
+          "K": "Общее количество всех пикселей",
+          "i": "Глубина цвета (вес одного пикселя)",
+          "I": "Информационный объём всего файла",
+          "N": "Количество цветов в палитре"
+        }
+      },
+      2: {
+        taskNum: 6,
+        letters: ["K", "i", "I", "N"],
+        items: [
+          "пиксели (точки)",
+          "биты (бит)",
+          "байты, Кбайты, Мбайты",
+          "количество цветов (безразмерная)"
+        ],
+        solution: {
+          "K": "пиксели (точки)",
+          "i": "биты (бит)",
+          "I": "байты, Кбайты, Мбайты",
+          "N": "количество цветов (безразмерная)"
+        }
+      }
+    };
+
+    let matchStates = {
+      1: { assigned: {}, selectedChip: null, initialized: false },
+      2: { assigned: {}, selectedChip: null, initialized: false }
+    };
+
+    function initMatchingTask(idx) {
+      if (matchStates[idx].initialized) return;
+      matchStates[idx].initialized = true;
+      renderMatchTask(idx);
+    }
+
+    function checkMatchReadiness(idx) {
+      const cfg = matchConfigs[idx];
+      const st = matchStates[idx];
+      const btn = document.getElementById(`btn-check-match${idx}`);
+      const isFull = cfg.letters.every(l => !!st.assigned[l]);
+      if (isFull && !taskStates[cfg.taskNum].completed) {
+        btn.classList.add('btn-pulse');
+      } else {
+        btn.classList.remove('btn-pulse');
+      }
+    }
+
+    function renderMatchTask(idx) {
+      const cfg = matchConfigs[idx];
+      const st = matchStates[idx];
+      const pool = document.getElementById(`chips-pool-match${idx}`);
+      pool.innerHTML = '';
+
+      cfg.items.forEach(item => {
+        if (!Object.values(st.assigned).includes(item)) {
+          const chip = document.createElement('div');
+          chip.className = `data-chip ${st.selectedChip === item ? 'selected' : ''}`;
+          chip.innerText = item;
+          chip.draggable = true;
+
+          chip.ondragstart = (e) => {
+            e.dataTransfer.setData('text/plain', JSON.stringify({ item, matchIdx: idx }));
+            chip.classList.add('dragging');
+          };
+          chip.ondragend = () => chip.classList.remove('dragging');
+          chip.onclick = () => {
+            st.selectedChip = (st.selectedChip === item) ? null : item;
+            renderMatchTask(idx);
+          };
+          pool.appendChild(chip);
+        }
+      });
+
+      cfg.letters.forEach(letter => {
+        const slot = document.getElementById(`slot-match${idx}-${letter}`);
+        const currentVal = st.assigned[letter];
+
+        slot.innerHTML = '';
+        slot.className = `board-slot ${currentVal ? 'filled' : ''}`;
+
+        if (currentVal) {
+          slot.innerHTML = `
+            <div class="slot-val-text">${currentVal}</div>
+            <div class="btn-remove-slot" title="Убрать">&times;</div>
+          `;
+          slot.querySelector('.btn-remove-slot').onclick = (e) => {
+            e.stopPropagation();
+            delete st.assigned[letter];
+            renderMatchTask(idx);
+          };
+        } else {
+          slot.innerHTML = `<span style="color:#94a3b8; font-size:13px;">+ перетащите соответствие</span>`;
+        }
+
+        slot.ondragover = (e) => { e.preventDefault(); slot.classList.add('drag-hover'); };
+        slot.ondragleave = () => slot.classList.remove('drag-hover');
+        slot.ondrop = (e) => {
+          e.preventDefault();
+          slot.classList.remove('drag-hover');
+          try {
+            const data = JSON.parse(e.dataTransfer.getData('text/plain'));
+            if (data && data.matchIdx === idx) {
+              setMatchAssignment(idx, letter, data.item);
+            }
+          } catch(err) {}
+        };
+
+        slot.onclick = () => {
+          if (st.selectedChip) {
+            setMatchAssignment(idx, letter, st.selectedChip);
+            st.selectedChip = null;
+            renderMatchTask(idx);
+          }
+        };
+      });
+
+      checkMatchReadiness(idx);
+    }
+
+    function setMatchAssignment(idx, letter, item) {
+      const st = matchStates[idx];
+      for (const k in st.assigned) {
+        if (st.assigned[k] === item) delete st.assigned[k];
+      }
+      st.assigned[letter] = item;
+      renderMatchTask(idx);
+    }
+
+    function checkMatchingTask(idx) {
+      const cfg = matchConfigs[idx];
+      const st = matchStates[idx];
+      const fb = document.getElementById(`fb-match${idx}`);
+      const btn = document.getElementById(`btn-check-match${idx}`);
+      fb.style.display = 'block';
+
+      btn.classList.remove('btn-pulse');
+      const taskNum = cfg.taskNum;
+      taskStates[taskNum].attempts++;
+
+      let allAssigned = true;
+      let hasError = false;
+
+      cfg.letters.forEach(letter => {
+        const slot = document.getElementById(`slot-match${idx}-${letter}`);
+        slot.classList.remove('error-border', 'success-border');
+        const assignedVal = st.assigned[letter];
+
+        if (!assignedVal) {
+          allAssigned = false;
+          slot.classList.add('error-border');
+        } else if (assignedVal !== cfg.solution[letter]) {
+          hasError = true;
+          slot.classList.add('error-border');
+        } else {
+          slot.classList.add('success-border');
+        }
+      });
+
+      if (!allAssigned) {
+        taskStates[taskNum].errors++;
+        fb.className = 'feedback-note wrong';
+        fb.innerHTML = `<strong>Не все строки заполнены!</strong> Перетащите карточки ко всем четырём буквам.`;
+        return;
+      }
+
+      if (hasError) {
+        taskStates[taskNum].errors++;
+        fb.className = 'feedback-note wrong';
+        fb.innerHTML = `<strong>Есть неточности.</strong> Красным выделены буквы с неверным соответствием. Нажмите &times;, чтобы исправить.`;
+      } else {
+        taskStates[taskNum].completed = true;
+        fb.className = 'feedback-note correct';
+        fb.innerHTML = `<strong>Превосходно!</strong> Все соответствия установлены абсолютно верно.`;
+        btn.disabled = true;
+      }
+
+      updateScoreCounter();
+      updateNextButtonState();
+    }
+
+    /* ПОШАГОВЫЕ ЗАДАЧИ-ДОСКИ (7, 8, 9, 10) */
     const boardConfigs = {
-      5: {
+      7: {
         allLetters: ["K", "I", "N", "i", "t", "f"],
         correctDano: ["K", "I"],
         correctFind: ["N"],
@@ -1184,7 +1550,7 @@
         correctI: 2,
         correctFinal: 4
       },
-      6: {
+      8: {
         allLetters: ["K", "I", "i", "N", "v", "t"],
         correctDano: ["K", "I"],
         correctFind: ["i"],
@@ -1205,7 +1571,7 @@
         correctI: 4,
         correctFinal: 4
       },
-      7: {
+      9: {
         allLetters: ["K", "N", "I", "i", "f", "v"],
         correctDano: ["K", "N"],
         correctFind: ["I"],
@@ -1221,7 +1587,7 @@
         correctI: 8,
         correctFinal: 4
       },
-      8: {
+      10: {
         allLetters: ["K", "I", "N", "i", "t", "v"],
         correctDano: ["K", "I"],
         correctFind: ["N"],
@@ -1240,10 +1606,10 @@
     };
 
     let boardStates = {
-      5: { stage: 1, danoLetters: [], findLetters: [], assignedVals: {}, placedFormulas: [], dragged: null, selected: null, initialized: false },
-      6: { stage: 1, danoLetters: [], findLetters: [], assignedVals: {}, placedFormulas: [], dragged: null, selected: null, initialized: false },
       7: { stage: 1, danoLetters: [], findLetters: [], assignedVals: {}, placedFormulas: [], dragged: null, selected: null, initialized: false },
-      8: { stage: 1, danoLetters: [], findLetters: [], assignedVals: {}, placedFormulas: [], dragged: null, selected: null, initialized: false }
+      8: { stage: 1, danoLetters: [], findLetters: [], assignedVals: {}, placedFormulas: [], dragged: null, selected: null, initialized: false },
+      9: { stage: 1, danoLetters: [], findLetters: [], assignedVals: {}, placedFormulas: [], dragged: null, selected: null, initialized: false },
+      10: { stage: 1, danoLetters: [], findLetters: [], assignedVals: {}, placedFormulas: [], dragged: null, selected: null, initialized: false }
     };
 
     function initBoardTask(taskNum) {
@@ -1264,19 +1630,30 @@
       st.selected = null;
 
       updateInstructionCard(taskNum, 1);
-      document.getElementById(`btn-check-${taskNum}`).innerText = "Проверить буквы";
-      document.getElementById(`btn-check-${taskNum}`).disabled = false;
-      document.getElementById(`calc-section-${taskNum}`).style.display = 'none';
+      const btn = document.getElementById(`btn-check-${taskNum}`);
+      btn.innerText = "Проверить буквы";
+      btn.disabled = false;
+      btn.classList.remove('btn-pulse');
 
-      document.getElementById(`formula-zone-${taskNum}`).innerHTML = '<span style="color:#94a3b8; font-size:13px;">Формулы понадобятся позже...</span>';
+      document.getElementById(`formula-section-${taskNum}`).style.display = 'none';
+      document.getElementById(`calc-section-${taskNum}`).style.display = 'none';
 
       const fb = document.getElementById(`fb-board-${taskNum}`);
       fb.style.display = 'none';
 
       renderBoardStage1(taskNum);
+      setupInputListeners(taskNum);
+    }
+
+    function triggerCardPulse(cardEl) {
+      if (!cardEl) return;
+      cardEl.classList.remove('card-step-pulse');
+      void cardEl.offsetWidth; // перезапуск анимации через reflow
+      cardEl.classList.add('card-step-pulse');
     }
 
     function updateInstructionCard(taskNum, stageNum) {
+      const cardEl = document.querySelector(`#page-${taskNum - 1} .action-instruction-card`);
       const tagEl = document.getElementById(`tag-step-${taskNum}`);
       const titleEl = document.getElementById(`title-action-${taskNum}`);
       const descEl = document.getElementById(`desc-action-${taskNum}`);
@@ -1285,19 +1662,57 @@
         tagEl.innerText = "ШАГ 1 ИЗ 3";
         titleEl.innerText = "Распределите буквы формулы:";
         descEl.innerText = "Перетащите нужные буквы в колонки «Дано» и «Найти». Лишние карточки оставьте на панели сверху!";
+        if (cardEl) cardEl.classList.remove('card-step-pulse');
       } else if (stageNum === 2) {
         tagEl.innerText = "ШАГ 2 ИЗ 3";
         titleEl.innerText = "Прикрепите числа к буквам:";
         descEl.innerText = "Перетащите числовые данные и вопрос задачи из верхней панели к соответствующим буквам слева.";
+        triggerCardPulse(cardEl);
       } else if (stageNum === 3) {
         tagEl.innerText = "ШАГ 3 ИЗ 3";
         titleEl.innerText = "Выберите формулы для решения:";
         descEl.innerText = "Перетащите в блок «Решение» только те формулы, которые понадобятся для вычислений (лишние не берите).";
+        triggerCardPulse(cardEl);
       } else if (stageNum === 4) {
         tagEl.innerText = "ФИНАЛ: ВЫЧИСЛЕНИЯ";
         titleEl.innerText = "Выполните расчёт и запишите ответ:";
         descEl.innerText = "Заполните пропущенные числа в решении справа и проверьте итоговый результат.";
+        triggerCardPulse(cardEl);
       }
+    }
+
+    function checkBoardReadiness(taskNum) {
+      const cfg = boardConfigs[taskNum];
+      const st = boardStates[taskNum];
+      const btn = document.getElementById(`btn-check-${taskNum}`);
+      let ready = false;
+
+      if (st.stage === 1) {
+        ready = (st.danoLetters.length === cfg.maxDanoCount && st.findLetters.length === cfg.maxFindCount);
+      } else if (st.stage === 2) {
+        const totalBoardLetters = st.danoLetters.length + st.findLetters.length;
+        const totalAssigned = Object.keys(st.assignedVals).length;
+        ready = (totalBoardLetters > 0 && totalAssigned === totalBoardLetters);
+      } else if (st.stage === 3) {
+        ready = (st.placedFormulas.length > 0);
+      } else if (st.stage === 4) {
+        const inpI = document.getElementById(`input-i-${taskNum}`);
+        ready = (inpI && inpI.value.trim().length > 0);
+      }
+
+      if (ready && !taskStates[taskNum].completed) {
+        btn.classList.add('btn-pulse');
+      } else {
+        btn.classList.remove('btn-pulse');
+      }
+    }
+
+    function setupInputListeners(taskNum) {
+      const container = document.getElementById(`calc-section-${taskNum}`);
+      if (!container) return;
+      container.querySelectorAll('input').forEach(inp => {
+        inp.oninput = () => checkBoardReadiness(taskNum);
+      });
     }
 
     function renderBoardStage1(taskNum) {
@@ -1332,6 +1747,8 @@
       if (st.findLetters.length < cfg.maxFindCount) {
         fBox.appendChild(createEmptyReceiverSlot(taskNum, 'find'));
       }
+
+      checkBoardReadiness(taskNum);
     }
 
     function renderBoardStage2(taskNum) {
@@ -1357,6 +1774,8 @@
       st.findLetters.forEach(letter => {
         fBox.appendChild(createBoardSlotStage2(taskNum, letter, 'find'));
       });
+
+      checkBoardReadiness(taskNum);
     }
 
     function renderLockedDanoFind(taskNum) {
@@ -1581,14 +2000,18 @@
           renderBoardStage3(taskNum);
         }
       };
+
+      checkBoardReadiness(taskNum);
     }
 
     function checkBoardStep(taskNum) {
       const cfg = boardConfigs[taskNum];
       const st = boardStates[taskNum];
       const fb = document.getElementById(`fb-board-${taskNum}`);
+      const btn = document.getElementById(`btn-check-${taskNum}`);
       fb.style.display = 'block';
 
+      btn.classList.remove('btn-pulse');
       taskStates[taskNum].attempts++;
 
       document.querySelectorAll(`#dano-slots-${taskNum} .board-slot, #find-slots-${taskNum} .board-slot`).forEach(el => {
@@ -1602,11 +2025,12 @@
 
         if (danoOk && findOk) {
           st.stage = 2;
+          taskStates[taskNum].correctStages++;
           fb.className = 'feedback-note correct';
           fb.innerHTML = `<strong>Буквы распределены абсолютно верно!</strong> Переходим ко второму шагу: прикрепите к каждой букве числовое значение из верхней панели.`;
 
           updateInstructionCard(taskNum, 2);
-          document.getElementById(`btn-check-${taskNum}`).innerText = "Проверить числовые значения";
+          btn.innerText = "Проверить числовые значения";
           renderBoardStage2(taskNum);
         } else {
           taskStates[taskNum].errors++;
@@ -1645,12 +2069,15 @@
 
         if (!hasError) {
           st.stage = 3;
+          taskStates[taskNum].correctStages++;
           fb.className = 'feedback-note correct';
-          fb.innerHTML = `<strong>Отлично! Дано и Найти полностью оформлены.</strong> Теперь перенесите в «Решение» только необходимые формулы (лишние формулы оставьте на панели сверху).`;
+          fb.innerHTML = `<strong>Отлично! Дано и Найти полностью оформлены.</strong> Теперь блок «Решение» открыт. Перенесите туда только необходимые формулы (лишние оставьте сверху).`;
 
           updateInstructionCard(taskNum, 3);
-          document.getElementById(`btn-check-${taskNum}`).innerText = "Проверить формулы";
+          btn.innerText = "Проверить формулы";
           renderLockedDanoFind(taskNum);
+          
+          document.getElementById(`formula-section-${taskNum}`).style.display = 'block';
           renderBoardStage3(taskNum);
         } else {
           taskStates[taskNum].errors++;
@@ -1663,7 +2090,7 @@
         let formulasValid = false;
         let hasForbiddenFormula = false;
 
-        if (taskNum === 6) {
+        if (taskNum === 8) {
           hasForbiddenFormula = cfg.forbiddenFormulas.some(f => st.placedFormulas.includes(f));
           const hasOptionMatch = cfg.acceptedFormulaOptions.some(opt => 
             opt.length === st.placedFormulas.length && opt.every(f => st.placedFormulas.includes(f))
@@ -1677,11 +2104,12 @@
 
         if (formulasValid) {
           st.stage = 4;
+          taskStates[taskNum].correctStages++;
           fb.className = 'feedback-note correct';
           fb.innerHTML = `<strong>Формулы выбраны точно!</strong> Переходим к расчётам: завершите вычисления в полях ниже.`;
 
           updateInstructionCard(taskNum, 4);
-          document.getElementById(`btn-check-${taskNum}`).innerText = "Проверить вычисления";
+          btn.innerText = "Проверить вычисления";
           document.getElementById(`chips-pool-${taskNum}`).innerHTML = '<div style="font-size:13px; color:#166534; font-weight:600;">Все необходимые формулы перенесены на доску</div>';
           document.getElementById(`calc-section-${taskNum}`).style.display = 'block';
         } else if (hasForbiddenFormula) {
@@ -1700,7 +2128,7 @@
       }
       // ЭТАП 4: Расчёт
       else if (st.stage === 4) {
-        if (taskNum === 5 || taskNum === 8) {
+        if (taskNum === 7 || taskNum === 10) {
           const valI = parseInt(document.getElementById(`input-i-${taskNum}`).value.trim(), 10);
           const inputNEl = document.getElementById(`input-n-${taskNum}`);
           const valNRaw = inputNEl ? inputNEl.value.trim() : '';
@@ -1714,7 +2142,7 @@
           }
 
           document.getElementById(`power-val-${taskNum}`).innerText = valI;
-          const nextStepRow = document.getElementById(`calc-step-${taskNum}-${taskNum === 5 ? 3 : 2}`);
+          const nextStepRow = document.getElementById(`calc-step-${taskNum}-${taskNum === 7 ? 3 : 2}`);
           if (nextStepRow) nextStepRow.style.display = 'flex';
 
           if (!valNRaw) {
@@ -1723,28 +2151,30 @@
           } else if (valN === cfg.correctFinal) {
             fb.className = 'feedback-note correct';
             fb.innerHTML = `<strong>Задача решена полностью верно! Ответ: N = ${cfg.correctFinal}.</strong>`;
-            document.getElementById(`btn-check-${taskNum}`).disabled = true;
+            btn.disabled = true;
             taskStates[taskNum].completed = true;
+            taskStates[taskNum].correctStages++;
           } else {
             taskStates[taskNum].errors++;
             fb.className = 'feedback-note wrong';
             fb.innerHTML = `i = ${valI} бит найдено верно, но значение N посчитано с ошибкой. Вычислите 2 в степени ${valI}.`;
           }
-        } else if (taskNum === 6) {
-          const valI = parseInt(document.getElementById('input-i-6').value.trim(), 10);
+        } else if (taskNum === 8) {
+          const valI = parseInt(document.getElementById('input-i-8').value.trim(), 10);
           if (valI === cfg.correctFinal) {
             fb.className = 'feedback-note correct';
             fb.innerHTML = `<strong>Задача решена полностью верно! Ответ: i = ${cfg.correctFinal} бит.</strong>`;
-            document.getElementById(`btn-check-6`).disabled = true;
+            btn.disabled = true;
             taskStates[taskNum].completed = true;
+            taskStates[taskNum].correctStages++;
           } else {
             taskStates[taskNum].errors++;
             fb.className = 'feedback-note wrong';
             fb.innerHTML = `<strong>Ошибка в вычислении i.</strong> Проверьте сокращение дроби: (24 &times; 1024 &times; 8) / (192 &times; 256).`;
           }
-        } else if (taskNum === 7) {
-          const valI = parseInt(document.getElementById('input-i-7').value.trim(), 10);
-          const inputKbEl = document.getElementById('input-kb-7');
+        } else if (taskNum === 9) {
+          const valI = parseInt(document.getElementById('input-i-9').value.trim(), 10);
+          const inputKbEl = document.getElementById('input-kb-9');
           const valKbRaw = inputKbEl ? inputKbEl.value.trim() : '';
           const valKb = parseInt(valKbRaw, 10);
 
@@ -1755,8 +2185,8 @@
             return;
           }
 
-          document.getElementById('calc-i-val-7').innerText = valI;
-          document.getElementById('calc-step-7-2').style.display = 'flex';
+          document.getElementById('calc-i-val-9').innerText = valI;
+          document.getElementById('calc-step-9-2').style.display = 'flex';
 
           if (!valKbRaw) {
             fb.className = 'feedback-note correct';
@@ -1764,8 +2194,9 @@
           } else if (valKb === cfg.correctFinal) {
             fb.className = 'feedback-note correct';
             fb.innerHTML = `<strong>Задача решена полностью верно! Ответ: I = ${cfg.correctFinal} Кбайт.</strong>`;
-            document.getElementById(`btn-check-7`).disabled = true;
+            btn.disabled = true;
             taskStates[taskNum].completed = true;
+            taskStates[taskNum].correctStages++;
           } else {
             taskStates[taskNum].errors++;
             fb.className = 'feedback-note wrong';
@@ -1777,38 +2208,46 @@
       updateNextButtonState();
     }
 
-    // ПОКАЗ ИТОГОВ
     function showResults() {
-      const totalScore = updateScoreCounter();
-      document.getElementById('final-score').innerText = totalScore + " / 8";
+      const { fullScore, partialCount, totalScore } = calculateScores();
+      const displayTotal = Number.isInteger(totalScore) ? totalScore : totalScore.toFixed(1);
+      document.getElementById('final-score').innerText = `${displayTotal} / ${totalTasks}`;
 
       const msg = document.getElementById('final-message');
-      if (totalScore === 8) {
-        msg.innerText = "Идеально! Все 8 заданий решены верно с первой попытки без единой ошибки!";
-      } else if (totalScore >= 5) {
-        msg.innerText = "Хороший результат! Основные формулы и взаимосвязи величин усвоены уверенно.";
+      if (fullScore === totalTasks) {
+        msg.innerText = `Идеально! Все ${totalTasks} заданий выполнены без единой ошибки с первой попытки!`;
+      } else if (totalScore >= 7) {
+        msg.innerHTML = `Хороший результат! Полных решений: <strong>${fullScore}</strong>, с исправленными ошибками (частично): <strong>${partialCount}</strong>.`;
       } else {
-        msg.innerText = "Рекомендуется повторить формулы I = K · i и N = 2ⁱ, а также внимательно следить за единицами измерения.";
+        msg.innerHTML = `Тест завершён. Верно с первой попытки: <strong>${fullScore}</strong>, частично: <strong>${partialCount}</strong>.<br>Рекомендуется повторить формулы I = K · i и N = 2ⁱ.`;
       }
 
       const badgesContainer = document.getElementById('results-badges');
       badgesContainer.innerHTML = '';
 
-      for (let i = 1; i <= 8; i++) {
+      for (let i = 1; i <= totalTasks; i++) {
         const st = taskStates[i];
         const badge = document.createElement('div');
         let statusClass = 'unanswered';
+        let statusTitle = 'Не выполнен';
 
-        if (st.completed) {
-          statusClass = (st.errors === 0) ? 'correct' : 'wrong';
+        if (st.completed && st.errors === 0) {
+          statusClass = 'correct'; // Зелёный (100% без ошибок)
+          statusTitle = 'Верно без ошибок';
+        } else if ((st.completed && st.errors > 0) || (st.correctStages > 0 && st.errors > 0)) {
+          statusClass = 'partial'; // Жёлтый (часть шагов верна, но были ошибки)
+          statusTitle = 'Частично верно / были ошибки';
         } else if (st.attempts > 0 || st.errors > 0) {
-          statusClass = 'wrong';
+          statusClass = 'wrong'; // Красный (не выполнено или сплошные ошибки)
+          statusTitle = 'Есть неисправленные ошибки';
         } else if (st.skipped) {
           statusClass = 'unanswered';
+          statusTitle = 'Пропущено';
         }
 
         badge.className = 'badge-item ' + statusClass;
         badge.innerText = '№' + i;
+        badge.title = `Задание №${i}: ${statusTitle}`;
 
         badge.onclick = (function(targetStep) {
           return function() {
